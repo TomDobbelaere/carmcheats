@@ -9,6 +9,9 @@ const path = require('path');
 const executable = `C:\\Users\\tomdo\\AppData\\Local\\Programs\\Python\\Python310\\python.exe`;
 const workingDirectory = `D:\\Git repos\\carmcheats`;
 const hashTarget = "4b054b60:6b6736cb";
+const hashSum = parseInt(hashTarget.split(':')[0], 16) >> 21;
+console.log(`Hashsum is ${hashSum}`);
+
 const { spawn } = require('child_process');
 let lastTime = new Date();
 let lastFound = 0;
@@ -32,13 +35,26 @@ const hasProcessed = processedWords.reduce((acc, word) => {
 }, {});
 console.log(`[!] Ignoring ${processedWords.length} already processed words`);
 
+let sumRejections = 0;
 const dictionaryWords = fs.readFileSync(path.join(__dirname, "words_alpha.dic")).toString()
   .split('\r\n')
-  .filter(word => (word.length < length && word.length > 3) && !hasProcessed[word])
+  .filter(word => {
+    const cSum = carmaSum(word);
+    const remainingChars = length - word.length;
+    const isSumInvalid = 22 * remainingChars + cSum > 600 || 47 * remainingChars + cSum < 600;
+
+    if (isSumInvalid) {
+      sumRejections++;
+    }
+
+    return !isSumInvalid && word.length < length && !hasProcessed[word];
+  })
   .sort((a, b) => {
     return a.length - b.length;
   });
 const totalSize = dictionaryWords.length;
+
+console.log(`[!] ${sumRejections} sum rejections`);
 
 
 readAndParseConfig();
@@ -135,4 +151,8 @@ function readAndParseConfig() {
   while (workers.length < maxWorkers) {
     createWorker();
   }
+}
+
+function carmaSum(text) {
+  return text.split('').map(e => e.charCodeAt(0) - 75).reduce((s, v) => s + v, 0);
 }
