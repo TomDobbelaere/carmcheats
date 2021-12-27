@@ -83,8 +83,8 @@ def main():
 
     if database:
         print(f"Found {len(database)} entries in the database:")
-        for entry in database:
-            print(f"{hash_target_str}:{entry}")
+        #for entry in database:
+        #    print(f"{hash_target_str}:{entry}")
 
     print("Starting search...")
 
