@@ -82,7 +82,7 @@ def main():
     print(f"Looking for cheat codes hashing to {hash_target_str}:")
 
     if database:
-        print(f"Found {len(database)} entries in the database:")
+        print(f"Found {len(database)} entries in the database")
         #for entry in database:
         #    print(f"{hash_target_str}:{entry}")
 

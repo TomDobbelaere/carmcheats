@@ -10,21 +10,25 @@ const executable = `C:\\Users\\tomdo\\AppData\\Local\\Programs\\Python\\Python31
 const workingDirectory = `D:\\Git repos\\carmcheats`;
 const hashTarget = "4b054b60:6b6736cb";
 const { spawn } = require('child_process');
+let lastTime = new Date();
+let lastFound = 0;
+let eta = 0;
 
 let workers = [];
 
+// TODO: read processed_words and filter them out
+
 const dictionaryWords = fs.readFileSync(path.join(__dirname, "words_alpha.dic")).toString()
   .split('\r\n')
-  .filter(word => word.length <= length && word.length > 3)
+  .filter(word => word.length < length && word.length > 3)
   .sort((a, b) => {
     return a.length - b.length;
   });
 const totalSize = dictionaryWords.length;
 
-createWorker();
-createWorker();
-createWorker();
-createWorker();
+for (let i = 0; i < 6; i++) {
+  createWorker();
+}
 
 function createWorker() {
   const crib = dictionaryWords.pop();
@@ -64,10 +68,27 @@ function createWorker() {
       console.error(`Could not update processed_words.${length}.txt`);
     }
 
+    if (new Date() - lastTime > 1000 * 60) {
+      updateETA();
+    }
+
     createWorker();
   });
 }
 
 function getTag(crib, cribIndex) {
-  return `[${length}.${crib}.(${cribIndex}/${totalSize})]`;
+  return `[${length}.${crib}.(${cribIndex}/${totalSize}) ETA: ${eta} min.]`;
+}
+
+function updateETA() {
+  const foundNow = totalSize - dictionaryWords.length;
+  const foundDiff = foundNow - lastFound;
+  const timeDiffMs = new Date() - lastTime;
+
+  const amountPerSecond = foundDiff / (timeDiffMs / 1000);
+
+  eta = Math.round((dictionaryWords.length / amountPerSecond) / 60);
+
+  lastTime = new Date();
+  lastFound = foundNow;
 }
