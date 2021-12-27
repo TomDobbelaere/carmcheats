@@ -69,7 +69,11 @@ function createWorker() {
     }
 
     if (new Date() - lastTime > 1000 * 60) {
-      updateETA();
+      try {
+        updateETA();
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     createWorker();
@@ -84,10 +88,15 @@ function updateETA() {
   const foundNow = totalSize - dictionaryWords.length;
   const foundDiff = foundNow - lastFound;
   const timeDiffMs = new Date() - lastTime;
+  let amountPerSecond;
 
-  const amountPerSecond = foundDiff / (timeDiffMs / 1000);
+  if ((timeDiffMs / 1000) > 0) {
+    amountPerSecond = foundDiff / (timeDiffMs / 1000);
+  }
 
-  eta = Math.round((dictionaryWords.length / amountPerSecond) / 60);
+  if (amountPerSecond > 0) {
+    eta = Math.round((dictionaryWords.length / amountPerSecond) / 60);
+  }
 
   lastTime = new Date();
   lastFound = foundNow;
