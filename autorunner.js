@@ -16,6 +16,7 @@ const { spawn } = require('child_process');
 let lastTime = new Date();
 let lastFound = 0;
 let eta = 0;
+let amountPerSecond = 0;
 
 let workers = [];
 let maxWorkers = 6;
@@ -120,14 +121,13 @@ function createWorker() {
 }
 
 function getTag(crib, cribIndex) {
-  return `[${length} ${crib} (${cribIndex}/${totalSize}) ETA: ${eta} min. ${workers.length}/${maxWorkers} workers]`;
+  return `[${length} ${crib} (${crib.length}) Word: ${cribIndex}/${totalSize} ETA: ${eta} min. ${workers.length}/${maxWorkers} workers]`;
 }
 
 function updateETA() {
   const foundNow = totalSize - dictionaryWords.length;
   const foundDiff = foundNow - lastFound;
   const timeDiffMs = new Date() - lastTime;
-  let amountPerSecond;
 
   if ((timeDiffMs / 1000) > 0) {
     amountPerSecond = foundDiff / (timeDiffMs / 1000);
