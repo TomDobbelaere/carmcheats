@@ -1,2 +1,3 @@
 build*
 *.py[cow]
+node_modules

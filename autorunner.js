@@ -25,7 +25,7 @@ const processedWordsFileName = `processed_words.${length}.txt`;
 const processedWordsFile = path.join(__dirname, processedWordsFileName);
 
 const processedWords = fs.existsSync(processedWordsFile) ? fs.readFileSync(processedWordsFile).toString()
-  .split('\r\n')
+  .split('\n')
   .filter(e => !!e.trim())
   : [];
 
