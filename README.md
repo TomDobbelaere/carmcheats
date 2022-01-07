@@ -13,7 +13,7 @@ python carm2.py
 
 ```cmd
 $ python -m carmcheat.algorithm -h
-usage: algorithm.py [-h] CHEATCODE [CHEATCODE ...]
+usage: algorithm.py [-h] [--steps] CHEATCODE [CHEATCODE ...]
 
 Hash some cheat codes
 
@@ -22,6 +22,7 @@ positional arguments:
 
 options:
   -h, --help  show this help message and exit
+  --steps     Show the steps
 ```
 
 Example usage:
@@ -37,27 +38,34 @@ This requires [z3-solver package](https://pypi.org/project/z3-solver/).
 
 ```cmd
 $ python -m carmcheat.cheat_retrieval -h
-usage: cheat_retrieval.py [-h] [--crib CRIB] [--database DB] target length
+usage: cheat_retrieval.py [-h] [--cribs CRIBS] [--crib-order {keep,dontcare}] [--database DB] [--intermediates] [--force] [--seed [SEED]] target length
 
 Use SAT solver to find cheat codes hashing to a target
 
 positional arguments:
-  target         Target hash (format=XXXXXXXX:XXXXXXXX), where X is hexadecimal
-  length         Length of cheat code
+  target                Target hash (format=XXXXXXXX:XXXXXXXX), where X is hexadecimal
+  length                Length(s) of cheat code to check/find. Or maximum length when checking intermediates.
 
 options:
-  -h, --help     show this help message and exit
-  --crib CRIB    Find only cheat codes that contain the 'crib'
-  --database DB  Append found cheat codes to this database
+  -h, --help            show this help message and exit
+  --cribs CRIBS         Find only cheat codes that contain all the 'cribs'. Use ',' as a separator.
+  --crib-order {keep,dontcare}
+                        Allowed order of the 'cribs'.
+  --database DB         Append found cheat codes to this database
+  --intermediates       Match intermediates
+  --force               Force search
+  --seed [SEED]         Initial z3 seed
 ```
 
 Example usage:
 ```cmd
 $ python -m carmcheat.cheat_retrieval 29cee8d4:8830c0d6 10 --database dummy.potfile
-Looking for cheat codes hashing to 29cee8d4:8830c0d6:
-Starting search...
+Looking for cheat codes hashing to 29cee8d4:8830c0d6
+Cheat length range: [8, 15]
+Found 0 entries in the database.
+Trying crib mask '__________'
 29cee8d4:8830c0d6:helloworld
-Search finished
+Search finished (32.5s)
 ```
 
 ## Sort and remove duplicates from a database
